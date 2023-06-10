@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "709933265587",
+    "project_id": "mobis-db",
+    "storage_bucket": "mobis-db.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:709933265587:android:81e1c27476cd3ea1eeb6c6",
+        "android_client_info": {
+          "package_name": "com.example.lab4"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "709933265587-opp5i0q9mlva3jkvkhpbdsl8i93cjfko.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEukmKnSGvUfmtV-720D68rzLwCS_lOEI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "709933265587-opp5i0q9mlva3jkvkhpbdsl8i93cjfko.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
