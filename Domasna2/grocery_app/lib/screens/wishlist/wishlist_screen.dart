@@ -41,7 +41,7 @@ class WishlistScreen extends StatelessWidget {
               elevation: 0,
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               title: TextWidget(
-                text: "Wishlist (${wishlistItemsList.length })",
+                text: "Wishlist (${wishlistItemsList.length})",
                 color: color,
                 textSize: 22,
                 isTitle: true,
@@ -53,8 +53,9 @@ class WishlistScreen extends StatelessWidget {
                       title: 'Empty your wishlist',
                       subtitle: 'Are you sure?',
                       context: context,
-                      fct: () {
-                        wishlistProvider.clearWishlist();
+                      fct: () async {
+                        await wishlistProvider.clearOnlineWishlist();
+                        wishlistProvider.clearLocalWishlist();
                         Navigator.pop(context);
                       },
                     );

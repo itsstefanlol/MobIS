@@ -80,7 +80,7 @@ class _ProductDetaulsState extends State<ProductDetails> {
           Flexible(
             flex: 2,
             child: FancyShimmerImage(
-              imageUrl: '',
+              imageUrl: getCurentProduct.imageUrl,
               width: size.width,
               boxFit: BoxFit.scaleDown,
               errorWidget: Image.asset(
@@ -313,7 +313,7 @@ class _ProductDetaulsState extends State<ProductDetails> {
                             child: InkWell(
                               onTap: _isInCart
                                   ? null
-                                  : () {
+                                  : () async {
                                       final User? user =
                                           authInstance.currentUser;
                                       if (user == null) {
@@ -323,11 +323,18 @@ class _ProductDetaulsState extends State<ProductDetails> {
                                             context: context);
                                         return;
                                       }
-                                      cartProvider.addProductToCart(
-                                        productId: getCurentProduct.id,
-                                        quantity: int.parse(
-                                            _quantityTextController.text),
-                                      );
+                                      await GlobalMethods.addToCart(
+                                          productId: getCurentProduct.id,
+                                          quantity: int.parse(
+                                              _quantityTextController.text),
+                                          context: context);
+                                      await cartProvider.fetchCart();
+
+                                      // cartProvider.addProductToCart(
+                                      //   productId: getCurentProduct.id,
+                                      //   quantity: int.parse(
+                                      //       _quantityTextController.text),
+                                      // );
                                     },
                               borderRadius: BorderRadius.circular(10),
                               child: Padding(

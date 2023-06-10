@@ -60,7 +60,7 @@ class _OnSaleWidgetState extends State<OnSaleWidget> {
                   children: [
                     FancyShimmerImage(
                       // https://i.ibb.co/F0s3FHQ/Apricots.png
-                      imageUrl: '',
+                      imageUrl: productModel.imageUrl,
                       height: size.width * 0.22,
                       width: size.width * 0.22,
                       boxFit: BoxFit.fill,
@@ -86,7 +86,7 @@ class _OnSaleWidgetState extends State<OnSaleWidget> {
                             GestureDetector(
                               onTap: _isInCart
                                   ? null
-                                  : () {
+                                  : () async {
                                       final User? user =
                                           authInstance.currentUser;
                                       if (user == null) {
@@ -96,10 +96,15 @@ class _OnSaleWidgetState extends State<OnSaleWidget> {
                                             context: context);
                                         return;
                                       }
-                                      cartProvider.addProductToCart(
-                                        productId: productModel.id,
-                                        quantity: 1,
-                                      );
+                                      await GlobalMethods.addToCart(
+                                          productId: productModel.id,
+                                          quantity: 1,
+                                          context: context);
+                                      await cartProvider.fetchCart();
+                                      // cartProvider.addProductToCart(
+                                      //   productId: productModel.id,
+                                      //   quantity: 1,
+                                      // );
                                     },
                               child: Icon(
                                 _isInCart ? IconlyBold.bag2 : IconlyLight.bag2,

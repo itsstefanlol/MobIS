@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/inner_screens/on_sale_screen.dart';
 import 'package:grocery_app/inner_screens/product_details.dart';
 import 'package:grocery_app/provider/dark_theme_provider.dart';
 import 'package:grocery_app/providers/cart_provider.dart';
+import 'package:grocery_app/providers/orders_provider.dart';
 import 'package:grocery_app/providers/products_provider.dart';
 import 'package:grocery_app/providers/viewed_prod_provider.dart';
 import 'package:grocery_app/providers/wishlist_provider.dart';
@@ -16,8 +18,14 @@ import 'package:grocery_app/screens/home_screen.dart';
 import 'package:grocery_app/screens/orders/orders_screen.dart';
 import 'package:grocery_app/screens/recently_viewed/viewed_recently.dart';
 import 'package:grocery_app/screens/wishlist/wishlist_screen.dart';
+import 'package:grocery_app/services/home_page.dart';
+import 'package:grocery_app/services/location_screen.dart';
+import 'package:grocery_app/services/location.dart';
+import 'package:grocery_app/services/show_map.dart';
 import 'package:provider/provider.dart';
+import 'consts/firebase_consts.dart';
 import 'consts/theme_data.dart';
+import 'fetch_screen.dart';
 import 'inner_screens/cat_screen.dart';
 import 'inner_screens/feed_screen.dart';
 
@@ -53,11 +61,13 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    User? user = authInstance.currentUser;
     return FutureBuilder(
         future: _firebaseInitialization,
         builder: (context, snapshot) {
-          if (snapshot.hasError) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const MaterialApp(
+              debugShowCheckedModeBanner: false,
               home: Scaffold(
                 body: Center(
                   child: CircularProgressIndicator(),
@@ -66,6 +76,7 @@ class _MyAppState extends State<MyApp> {
             );
           } else if (snapshot.hasError) {
             return const MaterialApp(
+              debugShowCheckedModeBanner: false,
               home: Scaffold(
                 body: Center(
                   child: Text('An error occured'),
@@ -90,27 +101,31 @@ class _MyAppState extends State<MyApp> {
               ChangeNotifierProvider(
                 create: (_) => ViewedProdProvider(),
               ),
+              ChangeNotifierProvider(
+                create: (_) => OrdersProvider(),
+              ),
             ],
             child: Consumer<DarkThemeProvider>(
                 builder: (context, themeProvider, child) {
               return MaterialApp(
                 debugShowCheckedModeBanner: false,
-                title: 'Flutter Demo',
+                title: 'Flutter',
                 theme: Styles.themeData(themeProvider.getDarkTheme, context),
-                home: const BottomBarScreen(),
+                home: const FetchScreen(),
                 routes: {
                   OnSaleScreen.routeName: (ctx) => const OnSaleScreen(),
                   FeedScreen.routeName: (ctx) => const FeedScreen(),
                   ProductDetails.routeName: (ctx) => const ProductDetails(),
                   WishlistScreen.routeName: (ctx) => const WishlistScreen(),
                   OrdersScreen.routeName: (ctx) => const OrdersScreen(),
+                  LocationScreen.routeName: (ctx) => LocationScreen(),
                   ViewedRecentlyScreen.routeName: (ctx) =>
                       const ViewedRecentlyScreen(),
                   RegisterScreen.routeName: (ctx) => const RegisterScreen(),
                   LoginScreen.routeName: (ctx) => const LoginScreen(),
                   ForgotPasswordScreen.routeName: (ctx) =>
                       const ForgotPasswordScreen(),
-                  CategoryScreen.routeName: (ctx) => const CategoryScreen(),
+                  HomePage.routeName: (ctx) => const HomePage(),
                 },
               );
             }),

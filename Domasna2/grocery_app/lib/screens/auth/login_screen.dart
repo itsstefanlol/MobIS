@@ -14,6 +14,7 @@ import 'package:grocery_app/widgets/auth_button.dart';
 import 'package:grocery_app/widgets/text_widget.dart';
 
 import '../../consts/firebase_consts.dart';
+import '../../fetch_screen.dart';
 import '../../widgets/auth_google_button.dart';
 import 'forgot_password.dart';
 
@@ -55,9 +56,9 @@ class _LoginScreenState extends State<LoginScreen> {
             email: _emailTextController.text.toLowerCase().trim(),
             password: _passwordTextController.text.trim());
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const BottomBarScreen(),
+          builder: (context) => const FetchScreen(),
         ));
-        print('Successfully logged in  user');
+        print('Successfully logged in user');
       } on FirebaseAuthException catch (error) {
         GlobalMethods.errorDialog(
             subtitle: '${error.message}', context: context);
@@ -287,7 +288,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     AuthButton(
                       fct: () {
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const BottomBarScreen(),
+                          builder: (context) => const FetchScreen(),
                         ));
                       },
                       buttonText: 'Continue as a guest',

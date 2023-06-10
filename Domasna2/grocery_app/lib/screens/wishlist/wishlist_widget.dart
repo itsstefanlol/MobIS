@@ -56,7 +56,7 @@ class WishlistWidget extends StatelessWidget {
                 width: size.width * 0.2,
                 height: size.height * 0.25,
                 child: FancyShimmerImage(
-                  imageUrl: '',
+                  imageUrl: getCurentProduct.imageUrl,
                   height: size.width * 0.22,
                   width: size.width * 0.22,
                   boxFit: BoxFit.fill,

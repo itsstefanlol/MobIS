@@ -24,6 +24,7 @@ class CategoryScreen extends StatefulWidget {
 class _CategoryScreenState extends State<CategoryScreen> {
   final TextEditingController? _searchTextController = TextEditingController();
   final FocusNode _searchTextFocusNode = FocusNode();
+  List<ProductModel> listProductSearch = [];
   @override
   void dispose() {
     _searchTextController!.dispose();
@@ -46,7 +47,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         centerTitle: true,
         title: TextWidget(
-          text: 'All Products',
+          text: catName,
           color: color,
           textSize: 20.0,
           isTitle: true,
@@ -54,7 +55,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
       ),
       body: productsByCat.isEmpty
           ? const EmptyProdWidget(
-              text: 'No products belong to this category',  
+              text: 'No products belong to this category',
             )
           : SingleChildScrollView(
               child: Column(
@@ -67,7 +68,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         focusNode: _searchTextFocusNode,
                         controller: _searchTextController,
                         onChanged: (searchText) {
-                          setState(() {});
+                          setState(() {
+                            listProductSearch =
+                                productsProvider.searchQuery(searchText);
+                          });
                         },
                         decoration: InputDecoration(
                           focusedBorder: OutlineInputBorder(
@@ -102,20 +106,29 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       ),
                     ),
                   ),
-                  GridView.count(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    crossAxisCount: 2,
-                    //crossAxisSpacing: 10,
-                    padding: EdgeInsets.zero,
-                    childAspectRatio: size.width / (size.height * 0.6),
-                    children: List.generate(productsByCat.length, (index) {
-                      return ChangeNotifierProvider.value(
-                        value: productsByCat[index],
-                        child: const FeedsWidget(),
-                      );
-                    }),
-                  ),
+                  _searchTextController!.text.isNotEmpty &&
+                          listProductSearch.isEmpty
+                      ? const EmptyProdWidget(
+                          text: 'No products match your search')
+                      : GridView.count(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          crossAxisCount: 2,
+                          //crossAxisSpacing: 10,
+                          padding: EdgeInsets.zero,
+                          childAspectRatio: size.width / (size.height * 0.6),
+                          children: List.generate(
+                              _searchTextController!.text.isNotEmpty
+                                  ? listProductSearch.length
+                                  : productsByCat.length, (index) {
+                            return ChangeNotifierProvider.value(
+                              value: _searchTextController!.text.isNotEmpty
+                                  ? listProductSearch[index]
+                                  : productsByCat[index],
+                              child: const FeedsWidget(),
+                            );
+                          }),
+                        ),
                 ],
               ),
             ),

@@ -48,7 +48,7 @@ class _ViewedRecentlyWidgetState extends State<ViewedRecentlyWidget> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             FancyShimmerImage(
-              imageUrl: '',
+              imageUrl: getCurentProduct.imageUrl,
               height: size.width * 0.27,
               width: size.width * 0.25,
               boxFit: BoxFit.fill,
@@ -90,7 +90,7 @@ class _ViewedRecentlyWidgetState extends State<ViewedRecentlyWidget> {
                     borderRadius: BorderRadius.circular(12),
                     onTap: _isInCart
                         ? null
-                        : () {
+                        : () async {
                             final User? user = authInstance.currentUser;
                             if (user == null) {
                               GlobalMethods.errorDialog(
@@ -99,10 +99,15 @@ class _ViewedRecentlyWidgetState extends State<ViewedRecentlyWidget> {
                                   context: context);
                               return;
                             }
-                            cartProvider.addProductToCart(
-                              productId: getCurentProduct.id,
-                              quantity: 1,
-                            );
+                            await GlobalMethods.addToCart(
+                                productId: getCurentProduct.id,
+                                quantity: 1,
+                                context: context);
+                            await cartProvider.fetchCart();
+                            // cartProvider.addProductToCart(
+                            //   productId: getCurentProduct.id,
+                            //   quantity: 1,
+                            // );
                           },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),

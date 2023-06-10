@@ -80,7 +80,7 @@ class _CartWidgetState extends State<CartWidget> {
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       child: FancyShimmerImage(
-                        imageUrl: '',
+                        imageUrl: getCurentProduct.imageUrl,
                         height: size.width * 0.2,
                         width: size.width * 0.2,
                         boxFit: BoxFit.fill,
@@ -173,8 +173,11 @@ class _CartWidgetState extends State<CartWidget> {
                       child: Column(
                         children: [
                           InkWell(
-                            onTap: () {
-                              cartProvider.removeOneItem(getCurentProduct.id);
+                            onTap: () async {
+                              await cartProvider.removeOneItem(
+                                  cartId: cartModel.id,
+                                  productId: cartModel.productId,
+                                  quantity: cartModel.quantity);
                             },
                             child: const Icon(
                               CupertinoIcons.cart_badge_minus,
@@ -190,7 +193,8 @@ class _CartWidgetState extends State<CartWidget> {
                             isInWishlist: _isInWishlist,
                           ),
                           TextWidget(
-                            text: '\$${usedPrice.toStringAsFixed(2)}',
+                            text:
+                                '\$${(usedPrice * int.parse(_quantityTextController.text)).toStringAsFixed(2)}',
                             color: color,
                             textSize: 18,
                             maxLines: 1,

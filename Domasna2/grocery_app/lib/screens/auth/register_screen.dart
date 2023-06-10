@@ -9,6 +9,7 @@ import 'package:grocery_app/screens/auth/login_screen.dart';
 import 'package:grocery_app/screens/btm_bar.dart';
 
 import '../../consts/constants.dart';
+import '../../fetch_screen.dart';
 import '../../services/global_methods.dart';
 import '../../services/utils.dart';
 import '../../widgets/auth_button.dart';
@@ -24,7 +25,7 @@ class RegisterScreen extends StatefulWidget {
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> { 
+class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final _fullNameController = TextEditingController();
@@ -48,66 +49,51 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-// try {
-//         await authInstance.createUserWithEmailAndPassword(
-//             email: _emailTextController.text.toLowerCase().trim(),
-//             password: _passTextController.text.trim());
-//         final User? user = authInstance.currentUser;
-//         final _uid = user!.uid;
-//         await FirebaseFirestore.instance.collection('users').doc(_uid).set({
-//           'id': _uid,
-//           'name': _fullNameController.text,
-//           'email': _emailTextController.text,
-//           'shipping-address': _addressTextController.text,
-//           'userWish': [],
-//           'userCart': [],
-//           'createdAt': Timestamp.now(),
-//         });
-//         Navigator.of(context).pushReplacement(MaterialPageRoute(
-//           builder: (context) => const BottomBarScreen(),
-//         ));
-//         print('Successfully registered user');
-//       } on FirebaseAuthException catch (error) {
-//         GlobalMethods.errorDialog(
-//             subtitle: '${error.message}', context: context);
-//         print("An error occurred: $error");
-//         setState(() {
-//           _isLoading = false;
-//         });
-//       } catch (error) {
-//         GlobalMethods.errorDialog(subtitle: '$error', context: context);
-//         print("An error occurred: $error");
-//         setState(() {
-//           _isLoading = false;
-//         });
-//       } finally {
-//         setState(() {
-//           _isLoading = false;
-//         });
-//       }
-
-  bool _isLoading = false; 
+  bool _isLoading = false;
   void _submitFormOnRegister() async {
     final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
-
     if (isValid) {
       _formKey.currentState!.save();
+      setState(() {
+        _isLoading = true;
+      });
       try {
         await authInstance.createUserWithEmailAndPassword(
-          email: _emailTextController.text.toLowerCase().trim(),
-          password: _passTextController.text.trim(),
-        );
-        
-        print('Successfully registered');
-      }on FirebaseException catch (error) {
-        // GlobalMethods.errorDialog(subtitle: '$error', context: context);
-        // print('An error occurred $error');
-        print(error);
+            email: _emailTextController.text.toLowerCase().trim(),
+            password: _passTextController.text.trim());
+        final User? user = authInstance.currentUser;
+        final _uid = user!.uid;
+        user.updateDisplayName(_fullNameController.text);
+        user.reload();
+        await FirebaseFirestore.instance.collection('users').doc(_uid).set({
+          'id': _uid,
+          'name': _fullNameController.text,
+          'email': _emailTextController.text,
+          'shipping-address': _addressTextController.text,
+          'userWish': [],
+          'userCart': [],
+          'createdAt': Timestamp.now(),
+        });
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => const FetchScreen(),
+        ));
+      } on FirebaseAuthException catch (error) {
+        GlobalMethods.errorDialog(
+            subtitle: '${error.message}', context: context);
+        setState(() {
+          _isLoading = false;
+        });
+      } catch (error) {
+        GlobalMethods.errorDialog(subtitle: '$error', context: context);
+        setState(() {
+          _isLoading = false;
+        });
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
       }
-      // setState(() {
-      //   _isLoading = true;
-      // });
     }
   }
 
@@ -365,7 +351,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             const TextStyle(color: Colors.white, fontSize: 18),
                         children: <TextSpan>[
                           TextSpan(
-                              text: ' Sign in',
+                              text: ' Sign up',
                               style: const TextStyle(
                                   color: Colors.lightBlue, fontSize: 18),
                               recognizer: TapGestureRecognizer()
